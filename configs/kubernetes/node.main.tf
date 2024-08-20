@@ -35,7 +35,7 @@ data "aws_instance" "master_node" {
 }
 
 module "node" {
-  source = "git@github.com:bnjns/terraform.git//configs/k3s/worker-node"
+  source = "git@github.com:bnjns/terraform.git//configs/k3s/worker-node" # tflint-ignore: terraform_module_pinned_source
 
   meta = merge(local.meta, {
     component = "k3s"
