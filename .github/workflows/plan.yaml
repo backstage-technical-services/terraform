@@ -41,6 +41,7 @@ jobs:
         with:
           config: ${{ matrix.config }}
           aws-role-arn: ${{ vars.AWS_PLAN_ROLE_ARN }}
+          ssh-private-key: ${{ secrets.TF_MODULES_PRIVATE_SSH_KEY }}
       - name: init
         id: init
         run: terraform init -no-color 2>&1 | tee /tmp/${{ github.run_id }}.init.txt

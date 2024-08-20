@@ -73,6 +73,7 @@ jobs:
         with:
           config: ${{ needs.check-approval.outputs.config }}
           aws-role-arn: ${{ vars.AWS_APPLY_ROLE_ARN }}
+          ssh-private-key: ${{ secrets.TF_MODULES_PRIVATE_SSH_KEY }}
       - name: init
         id: init
         run: terraform init -no-color 2>&1 | tee /tmp/${{ github.run_id }}.init.txt

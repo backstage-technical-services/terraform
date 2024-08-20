@@ -8,6 +8,9 @@ inputs:
   aws-role-arn:
     description: The ARN of the AWS role to authenticate with
     required: true
+  ssh-private-key:
+    description: The private SSH key used to download the terraform modules
+    required: true
 
 runs:
   using: composite
@@ -18,6 +21,9 @@ runs:
         echo "$HOME/.local/bin" >> $GITHUB_PATH
         bash <(curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh) -b $HOME/.local/bin
         tfswitch -b $HOME/.local/bin/terraform
+    - uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ inputs.ssh-private-key }}
     - name: Configure AWS credentials
       uses: mcblair/configure-aws-profile-action@v0.1.1
       with:
