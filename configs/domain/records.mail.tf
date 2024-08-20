@@ -1,11 +1,3 @@
-locals {
-  mx_records = [
-    "aspmx.l.google.com",
-    "mx1.improvmx.com",
-    "mx2.improvmx.com",
-  ]
-}
-
 resource "aws_route53_record" "MX_bts_crew_com" {
   zone_id = aws_route53_zone.bts_crew_com.id
   name    = ""

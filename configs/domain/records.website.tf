@@ -16,7 +16,7 @@ resource "aws_route53_record" "website" {
 ########################################################################################################################
 data "aws_eip" "k3s_node" {
   filter {
-    name = "tag:Name"
+    name   = "tag:Name"
     values = ["backstage-k3s-worker"]
   }
 }
