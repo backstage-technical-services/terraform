@@ -1,0 +1,126 @@
+name: Apply
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+  issues: write
+  statuses: write
+
+on:
+  issue_comment:
+    types: [ created ]
+
+jobs:
+  check-approval:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, '/apply') }}
+    steps:
+      - name: react
+        uses: dkershner6/reaction-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          reaction: eyes
+      - name: fetch pull request information
+        id: pull-request
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            let pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+            core.setOutput("base_sha", pr.data.base.sha);
+            core.setOutput("head_sha", pr.data.head.sha);
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.pull-request.outputs.head_sha }}
+      - name: handle apply
+        id: handle-apply
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { handleApply } = require('./scripts/actions-helpers.js');
+            
+            handleApply({ github, context, core })
+      - name: status check
+        uses: billyjbryant/create-status-check@v2
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ steps.pull-request.outputs.head_sha }}
+          context: apply (${{ steps.handle-apply.outputs.config }})
+          state: pending
+          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    outputs:
+      sha: ${{ steps.pull-request.outputs.head_sha }}
+      config: ${{ steps.handle-apply.outputs.config }}
+
+  apply:
+    runs-on: ubuntu-latest
+    needs: check-approval
+    defaults:
+      run:
+        shell: bash
+        working-directory: configs/${{ needs.check-approval.outputs.config }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.check-approval.outputs.sha }}
+      - uses: ./.github/actions/setup
+        with:
+          config: ${{ needs.check-approval.outputs.config }}
+          aws-role-arn: ${{ vars.AWS_APPLY_ROLE_ARN }}
+      - name: init
+        id: init
+        run: terraform init -no-color 2>&1 | tee /tmp/${{ github.run_id }}.init.txt
+      - name: apply
+        id: apply
+        run: terraform apply -auto-approve -no-color 2>&1  | tee /tmp/${{ github.run_id }}.apply.txt
+      - name: status check
+        if: always()
+        uses: billyjbryant/create-status-check@v2
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          sha: ${{ needs.check-approval.outputs.sha }}
+          context: apply (${{ needs.check-approval.outputs.config }})
+          state: ${{ steps.apply.outcome == 'success' && 'success' || 'failure' }}
+          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      - name: build comment
+        if: always()
+        id: build-comment
+        uses: actions/github-script@v7
+        env:
+          STEP_INIT_OUTCOME: ${{ steps.init.outcome }}
+          STEP_APPLY_OUTCOME: ${{ steps.apply.outcome }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            const { buildComment } = require('./scripts/actions-helpers.js');
+            
+            return buildComment({
+              context,
+              core,
+              command: 'apply',
+              configName: '${{ needs.check-approval.outputs.config }}', 
+              steps: [
+                { name: 'init' },
+                { name: 'apply' },
+              ]
+            });
+      - name: post comment
+        if: always()  
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: ${{ steps.build-comment.outputs.result }}
+          comment_tag: ${{ needs.check-approval.outputs.config }}
+          mode: recreate
+      - name: react
+        if: always()
+        uses: dkershner6/reaction-action@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          reaction: '+1'

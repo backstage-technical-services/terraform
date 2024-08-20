@@ -1,0 +1,26 @@
+name: Set up
+description: Installs terraform and sets up AWS
+
+inputs:
+  config:
+    description: ''
+    required: true
+  aws-role-arn:
+    description: The ARN of the AWS role to authenticate with
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      working-directory: configs/${{ inputs.config }}
+      run: |
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        bash <(curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh) -b $HOME/.local/bin
+        tfswitch -b $HOME/.local/bin/terraform
+    - name: Configure AWS credentials
+      uses: mcblair/configure-aws-profile-action@v0.1.1
+      with:
+        profile-name: backstage
+        role-arn: ${{ inputs.aws-role-arn }}
+        region: eu-west-1
