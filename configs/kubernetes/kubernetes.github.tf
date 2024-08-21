@@ -29,8 +29,8 @@ resource "kubernetes_cluster_role_v1" "github_actions" {
 
   rule {
     api_groups = ["certificates.k8s.io"]
-    resources  = ["certificatesigningrequests"]
-    verbs      = ["create", "get"]
+    resources = ["certificatesigningrequests"]
+    verbs = ["create", "get"]
   }
 }
 resource "kubernetes_cluster_role_binding_v1" "github_actions" {
@@ -63,19 +63,35 @@ resource "kubernetes_role_v1" "github_actions" {
   }
 
   rule {
-    api_groups = [
-      "",
-      "apps",
-      "networking.k8s.io",
+    api_groups = [""]
+    resources = [
+      "services",
+      "secrets",
     ]
+    verbs = ["*"]
+  }
+
+  rule {
+    api_groups = ["apps"]
     resources = [
       "deployments",
       "replicasets",
       "statefulsets",
-      "ingresses",
-      "services",
-      "secrets"
     ]
+    verbs = ["*"]
+  }
+
+  rule {
+    api_groups = ["networking.k8s.io"]
+    resources = [
+      "ingresses",
+    ]
+    verbs = ["*"]
+  }
+
+  rule {
+    api_groups = ["external-secrets.io"]
+    resources = ["externalsecrets"]
     verbs = ["*"]
   }
 }
