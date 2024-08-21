@@ -29,8 +29,8 @@ resource "kubernetes_cluster_role_v1" "github_actions" {
 
   rule {
     api_groups = ["certificates.k8s.io"]
-    resources = ["certificatesigningrequests"]
-    verbs = ["create", "get"]
+    resources  = ["certificatesigningrequests"]
+    verbs      = ["create", "get"]
   }
 }
 resource "kubernetes_cluster_role_binding_v1" "github_actions" {
@@ -91,8 +91,8 @@ resource "kubernetes_role_v1" "github_actions" {
 
   rule {
     api_groups = ["external-secrets.io"]
-    resources = ["externalsecrets"]
-    verbs = ["*"]
+    resources  = ["externalsecrets"]
+    verbs      = ["*"]
   }
 }
 
