@@ -8,7 +8,6 @@ resource "aws_ebs_volume" "node_data" {
   size              = 20
   type              = "gp3"
   tags = {
-    Name      = "${local.meta.owner}-k3s-data"
-    component = "k3s"
+    Name = "${local.meta.owner}-k3s-data"
   }
 }

@@ -37,9 +37,7 @@ data "aws_instance" "master_node" {
 module "node" {
   source = "git@github.com:bnjns/terraform.git//configs/k3s/worker-node" # tflint-ignore: terraform_module_pinned_source
 
-  meta = merge(local.meta, {
-    component = "k3s"
-  })
+  meta          = local.meta
   ami_id        = data.aws_ami.default.image_id
   instance_type = "t4g.small"
   vpc           = data.terraform_remote_state.base_infra.outputs.vpc
