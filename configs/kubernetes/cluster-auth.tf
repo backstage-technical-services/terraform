@@ -17,10 +17,18 @@ resource "kubernetes_certificate_signing_request_v1" "default" {
   }
 }
 
-resource "aws_ssm_parameter" "certificate" {
+resource "kubernetes_secret_v1" "auth_certificate" {
   for_each = local.certificates
 
-  name  = "/backstage/kubernetes/cluster-auth/${each.key}"
-  type  = "SecureString"
-  value = kubernetes_certificate_signing_request_v1.default[each.key].certificate
+  metadata {
+    namespace   = "backstage"
+    name        = "cluster-auth-${each.key}"
+    annotations = local.default_annotations
+  }
+
+  type = "kubernetes.io/tls"
+  data = {
+    "tls.key" = ""
+    "tls.crt" = kubernetes_certificate_signing_request_v1.default[each.key].certificate
+  }
 }
