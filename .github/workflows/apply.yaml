@@ -47,13 +47,21 @@ jobs:
             
             handleApply({ github, context, core })
       - name: status check
-        uses: billyjbryant/create-status-check@v2
+        uses: actions/github-script@v7
         with:
-          authToken: ${{ secrets.GITHUB_TOKEN }}
-          sha: ${{ steps.pull-request.outputs.head_sha }}
-          context: apply (${{ steps.handle-apply.outputs.config }})
-          state: pending
-          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { createStatusCheck } = require('./scripts/actions-helpers.js');
+
+            createStatusCheck({
+              github,
+              context,
+              core,
+              sha: '${{ steps.pull-request.outputs.head_sha }}',
+              state: 'pending',
+              targetUrl: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}',
+              checkContext: 'apply (${{ steps.handle-apply.outputs.config }})'
+            })
     outputs:
       sha: ${{ steps.pull-request.outputs.head_sha }}
       config: ${{ steps.handle-apply.outputs.config }}
@@ -82,13 +90,21 @@ jobs:
         run: terraform apply -auto-approve -no-color 2>&1  | tee /tmp/${{ github.run_id }}.apply.txt
       - name: status check
         if: always()
-        uses: billyjbryant/create-status-check@v2
+        uses: actions/github-script@v7
         with:
-          authToken: ${{ secrets.GITHUB_TOKEN }}
-          sha: ${{ needs.check-approval.outputs.sha }}
-          context: apply (${{ needs.check-approval.outputs.config }})
-          state: ${{ steps.apply.outcome == 'success' && 'success' || 'failure' }}
-          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { createStatusCheck } = require('./scripts/actions-helpers.js');
+            
+            createStatusCheck({
+              github,
+              context,
+              core,
+              sha: '${{ needs.check-approval.outputs.sha }}',
+              state: '${{ steps.apply.outcome == 'success' && 'success' || 'failure' }}',
+              targetUrl: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}',
+              checkContext: 'apply (${{ needs.check-approval.outputs.config }})'
+            })
       - name: build comment
         if: always()
         id: build-comment

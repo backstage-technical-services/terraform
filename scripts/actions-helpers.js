@@ -106,6 +106,24 @@ const fetchJobLink = (context) => {
   return `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}?check_suite_focus=true`
 }
 
+const createStatusCheck = async ({ github, context, core, sha, state, targetUrl, checkContext }) => {
+  const request = {
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    sha,
+    state,
+    target_url: targetUrl,
+    context: checkContext,
+  }
+  core.debug(`Commit status request: ${JSON.stringify(request)}`)
+
+  try{
+    await github.rest.repos.createCommitStatus(request)
+  } catch (error) {
+    core.setFailed(`Error creating commit status ${JSON.stringify(request)}: ${error}`)
+  }
+}
+
 const handleApply = async ({github, context, core}) => {
   const postComment = (body) => github.rest.issues.createComment({
     owner: context.repo.owner,
@@ -166,4 +184,5 @@ Make sure all merge conflicts are resolved, all required status checks have pass
 module.exports = {
   buildComment,
   handleApply,
+  createStatusCheck,
 }
