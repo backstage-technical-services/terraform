@@ -11,3 +11,12 @@ locals {
   }
   default_annotations = { for k, v in local.default_tags : "bnjns.uk/${k}" => v }
 }
+
+module "mariadb_10_4" {
+  source = "./database"
+
+  engine         = "mariadb"
+  engine_version = "10.4"
+
+  default_annotations = local.default_annotations
+}
