@@ -24,3 +24,16 @@ resource "aws_ssm_parameter" "db_credentials" {
     ignore_changes = [value]
   }
 }
+
+resource "aws_ssm_parameter" "smtp_credentials" {
+  name = "${local.ssm_prefix}/smtp-credentials"
+  type = "SecureString"
+  value = jsonencode({
+    username = ""
+    password = ""
+  })
+
+  lifecycle {
+    ignore_changes = [value]
+  }
+}
