@@ -80,3 +80,23 @@ resource "aws_ssm_parameter" "youtube_api_key" {
     ignore_changes = [value]
   }
 }
+
+resource "aws_ssm_parameter" "finance_db_key" {
+  name  = "${local.ssm_prefix}/finance-db-key"
+  type  = "SecureString"
+  value = "empty"
+
+  lifecycle {
+    ignore_changes = [value]
+  }
+}
+
+resource "aws_ssm_parameter" "backup_webhook" {
+  name  = "${local.ssm_prefix}/backup-webhook"
+  type  = "SecureString"
+  value = "empty"
+
+  lifecycle {
+    ignore_changes = [value]
+  }
+}
