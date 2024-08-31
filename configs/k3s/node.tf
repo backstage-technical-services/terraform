@@ -38,7 +38,7 @@ module "node" {
   source = "git@github.com:bnjns/terraform.git//configs/k3s/worker-node" # tflint-ignore: terraform_module_pinned_source
 
   meta          = local.meta
-  ami_id        = data.aws_ami.default.image_id
+  ami           = data.aws_ami.default
   instance_type = "t4g.small"
   vpc           = data.terraform_remote_state.base_infra.outputs.vpc
 
@@ -53,6 +53,7 @@ module "node" {
     "bnjns.uk/reserved-for" = "backstage"
   }
 
+  root_volume_size = 30
   volumes = {
     sdf = aws_ebs_volume.node_data.id
   }
