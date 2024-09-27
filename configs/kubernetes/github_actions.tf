@@ -67,6 +67,7 @@ resource "kubernetes_role_v1" "github_actions" {
     resources = [
       "services",
       "secrets",
+      "configmaps",
     ]
     verbs = ["*"]
   }
@@ -77,6 +78,14 @@ resource "kubernetes_role_v1" "github_actions" {
       "deployments",
       "replicasets",
       "statefulsets",
+    ]
+    verbs = ["*"]
+  }
+
+  rule {
+    api_groups = ["batch"]
+    resources = [
+      "cronjobs",
     ]
     verbs = ["*"]
   }
