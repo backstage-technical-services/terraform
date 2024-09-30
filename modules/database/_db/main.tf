@@ -9,20 +9,6 @@ locals {
   labels = merge(local.selector_labels, {
     "app.kubernetes.io/name" = "database-${local.component}"
   })
-
-  config = local.engine_config[var.engine]
-}
-
-resource "random_password" "root_password" {
-  length  = 20
-  special = false
-}
-
-
-resource "aws_ssm_parameter" "root_password" {
-  name  = "/backstage/database/${local.component}/root-password"
-  type  = "SecureString"
-  value = random_password.root_password.result
 }
 
 resource "kubernetes_service_v1" "default" {
@@ -38,34 +24,7 @@ resource "kubernetes_service_v1" "default" {
     selector = local.selector_labels
 
     port {
-      port = local.config.port
-    }
-  }
-}
-
-resource "kubernetes_manifest" "default" {
-  manifest = {
-    apiVersion = "external-secrets.io/v1beta1"
-    kind       = "ExternalSecret"
-    metadata = {
-      namespace   = "backstage"
-      name        = "database-${local.component}-credentials"
-      annotations = var.default_annotations
-      labels      = local.labels
-    }
-    spec = {
-      secretStoreRef = {
-        kind = "SecretStore"
-        name = "aws-ssm"
-      }
-      data = [
-        {
-          secretKey = local.config.root_password_variable_name
-          remoteRef = {
-            key = aws_ssm_parameter.root_password.name
-          }
-        }
-      ]
+      port = var.port
     }
   }
 }
@@ -101,7 +60,7 @@ resource "kubernetes_stateful_set_v1" "default" {
           image_pull_policy = "IfNotPresent"
 
           dynamic "env" {
-            for_each = local.config.env_variables
+            for_each = var.env
 
             content {
               name  = env.key
@@ -111,13 +70,13 @@ resource "kubernetes_stateful_set_v1" "default" {
 
           env_from {
             secret_ref {
-              name = kubernetes_manifest.default.manifest.metadata.name
+              name = kubernetes_manifest.external_secrets.manifest.metadata.name
             }
           }
 
           volume_mount {
             name       = "data"
-            mount_path = local.config.data_dir
+            mount_path = var.data_dir
           }
         }
 
