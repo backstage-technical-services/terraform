@@ -1,9 +1,5 @@
-locals {
-  ssm_prefix = "/${var.meta.owner}/${var.meta.environment}/${var.meta.component}"
-}
-
 resource "aws_ssm_parameter" "app_key" {
-  name  = "${local.ssm_prefix}/app-key"
+  name  = "${var.ssm_prefix}/app-key"
   type  = "SecureString"
   value = "empty"
 
@@ -13,7 +9,7 @@ resource "aws_ssm_parameter" "app_key" {
 }
 
 resource "aws_ssm_parameter" "bugsnag_api_key" {
-  name  = "${local.ssm_prefix}/bugsnag-api-key"
+  name  = "${var.ssm_prefix}/bugsnag-api-key"
   type  = "SecureString"
   value = "empty"
 
@@ -23,7 +19,7 @@ resource "aws_ssm_parameter" "bugsnag_api_key" {
 }
 
 resource "aws_ssm_parameter" "db_credentials" {
-  name = "${local.ssm_prefix}/db-credentials"
+  name = "${var.ssm_prefix}/db-credentials"
   type = "SecureString"
   value = jsonencode({
     username = ""
@@ -36,7 +32,7 @@ resource "aws_ssm_parameter" "db_credentials" {
 }
 
 resource "aws_ssm_parameter" "log_level" {
-  name  = "${local.ssm_prefix}/log-level"
+  name  = "${var.ssm_prefix}/log-level"
   type  = "String"
   value = "info"
 
@@ -46,7 +42,7 @@ resource "aws_ssm_parameter" "log_level" {
 }
 
 resource "aws_ssm_parameter" "nocaptcha_config" {
-  name = "${local.ssm_prefix}/nocaptcha-config"
+  name = "${var.ssm_prefix}/nocaptcha-config"
   type = "SecureString"
   value = jsonencode({
     siteKey = ""
@@ -59,7 +55,7 @@ resource "aws_ssm_parameter" "nocaptcha_config" {
 }
 
 resource "aws_ssm_parameter" "smtp_credentials" {
-  name = "${local.ssm_prefix}/smtp-credentials"
+  name = "${var.ssm_prefix}/smtp-credentials"
   type = "SecureString"
   value = jsonencode({
     username = ""
@@ -72,7 +68,7 @@ resource "aws_ssm_parameter" "smtp_credentials" {
 }
 
 resource "aws_ssm_parameter" "youtube_api_key" {
-  name  = "${local.ssm_prefix}/youtube-api-key"
+  name  = "${var.ssm_prefix}/youtube-api-key"
   type  = "SecureString"
   value = "empty"
 
@@ -82,7 +78,7 @@ resource "aws_ssm_parameter" "youtube_api_key" {
 }
 
 resource "aws_ssm_parameter" "finance_db_key" {
-  name  = "${local.ssm_prefix}/finance-db-key"
+  name  = "${var.ssm_prefix}/finance-db-key"
   type  = "SecureString"
   value = "empty"
 
@@ -92,7 +88,7 @@ resource "aws_ssm_parameter" "finance_db_key" {
 }
 
 resource "aws_ssm_parameter" "backup_webhook" {
-  name  = "${local.ssm_prefix}/backup-webhook"
+  name  = "${var.ssm_prefix}/backup-webhook"
   type  = "SecureString"
   value = "empty"
 

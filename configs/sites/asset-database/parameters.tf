@@ -1,9 +1,5 @@
-locals {
-  ssm_prefix = "/${var.meta.owner}/${var.meta.environment}/${var.meta.component}"
-}
-
 resource "aws_ssm_parameter" "secret_key" {
-  name  = "${local.ssm_prefix}/secret-key"
+  name  = "${var.ssm_prefix}/secret-key"
   type  = "SecureString"
   value = "empty"
 
@@ -13,7 +9,7 @@ resource "aws_ssm_parameter" "secret_key" {
 }
 
 resource "aws_ssm_parameter" "db_credentials" {
-  name = "${local.ssm_prefix}/db-credentials"
+  name = "${var.ssm_prefix}/db-credentials"
   type = "SecureString"
   value = jsonencode({
     username = ""
@@ -26,7 +22,7 @@ resource "aws_ssm_parameter" "db_credentials" {
 }
 
 resource "aws_ssm_parameter" "smtp_credentials" {
-  name = "${local.ssm_prefix}/smtp-credentials"
+  name = "${var.ssm_prefix}/smtp-credentials"
   type = "SecureString"
   value = jsonencode({
     username = ""
