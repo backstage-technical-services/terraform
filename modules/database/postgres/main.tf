@@ -4,6 +4,10 @@ variable "engine_version" {
 variable "default_annotations" {
   type = map(string)
 }
+variable "memory_limit" {
+  type    = string
+  default = null
+}
 
 module "this" {
   source = "../_db"
@@ -23,6 +27,8 @@ module "this" {
     POSTGRES_USER     = random_pet.root_username.id
     POSTGRES_PASSWORD = random_password.root_password.result
   }
+
+  memory_limit = var.memory_limit
 }
 
 resource "random_pet" "root_username" {

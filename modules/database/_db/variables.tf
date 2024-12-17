@@ -32,3 +32,7 @@ variable "env" {
   type    = map(string)
   default = {}
 }
+variable "memory_limit" {
+  type    = string
+  default = null
+}

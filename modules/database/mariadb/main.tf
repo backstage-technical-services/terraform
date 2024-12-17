@@ -4,6 +4,10 @@ variable "engine_version" {
 variable "default_annotations" {
   type = map(string)
 }
+variable "memory_limit" {
+  type    = string
+  default = null
+}
 
 module "this" {
   source = "../_db"
@@ -21,6 +25,8 @@ module "this" {
   env = {
     MARIADB_ROOT_HOST = "localhost"
   }
+
+  memory_limit = var.memory_limit
 }
 
 resource "random_password" "root_password" {

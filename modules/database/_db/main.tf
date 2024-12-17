@@ -78,6 +78,19 @@ resource "kubernetes_stateful_set_v1" "default" {
             name       = "data"
             mount_path = var.data_dir
           }
+
+          dynamic "resources" {
+            for_each = var.memory_limit != null ? [1] : []
+
+            content {
+              requests = {
+                memory = var.memory_limit
+              }
+              limits = {
+                memory = var.memory_limit
+              }
+            }
+          }
         }
 
         volume {

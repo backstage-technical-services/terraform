@@ -17,6 +17,8 @@ module "mariadb_10_4" {
 
   engine_version      = "10.4"
   default_annotations = local.default_annotations
+
+  memory_limit = "256Mi"
 }
 
 module "postgres_16" {
@@ -24,4 +26,6 @@ module "postgres_16" {
 
   engine_version      = "16"
   default_annotations = local.default_annotations
+
+  memory_limit = "128Mi"
 }
