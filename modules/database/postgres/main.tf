@@ -13,7 +13,11 @@ module "this" {
   engine         = "postgres"
   engine_version = var.engine_version
   port           = 5432
-  data_dir       = "/var/lib/postgresql"
+  data_dir       = "/var/lib/postgresql/data"
+
+  env = {
+    PGDATA = "/var/lib/postgresql/data"
+  }
 
   secrets = {
     POSTGRES_USER     = random_pet.root_username.id
