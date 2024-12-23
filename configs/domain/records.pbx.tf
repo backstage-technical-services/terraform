@@ -5,6 +5,6 @@ resource "aws_route53_record" "pbx" {
   zone_id = aws_route53_zone.bts_crew_com.id
   name    = "pbx"
   type    = "A"
-  records = 138.38.11.60
+  records = ["138.38.11.60"]
   ttl     = 60
 }
