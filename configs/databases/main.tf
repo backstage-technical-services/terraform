@@ -13,7 +13,7 @@ locals {
 }
 
 module "mariadb_10_4" {
-  source = "../../modules/database/mariadb"
+  source = "./database/mariadb"
 
   engine_version      = "10.4"
   default_annotations = local.default_annotations
@@ -22,7 +22,7 @@ module "mariadb_10_4" {
 }
 
 module "postgres_16" {
-  source = "../../modules/database/postgres"
+  source = "./database/postgres"
 
   engine_version      = "16"
   default_annotations = local.default_annotations
