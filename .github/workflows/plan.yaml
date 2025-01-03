@@ -50,7 +50,13 @@ jobs:
         run: terraform validate -no-color 2>&1 | tee /tmp/${{ github.run_id }}.validate.txt
       - name: plan
         id: plan
-        run: terraform plan -no-color -lock=false -out plan.out 2>&1 | tee /tmp/${{ github.run_id }}.plan.txt
+        run: terraform plan -no-color -lock=false -out=plan.out 2>&1 | tee /tmp/${{ github.run_id }}.plan.txt
+      - name: upload plan output
+        run: |
+          aws s3 cp \
+            plan.out \
+            s3://backstage-terraform-plan-outputs/${{ github.event.pull_request.number }}/${{ matrix.config }}.out \
+            --profile backstage
       - name: build comment
         if: always()
         id: build-comment
