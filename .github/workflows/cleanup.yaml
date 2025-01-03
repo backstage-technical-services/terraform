@@ -1,0 +1,27 @@
+name: Clean up
+
+permissions:
+  contents: read
+  id-token: write
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [ closed ]
+
+jobs:
+  delete-plan-outputs:
+    name: Delete plan outputs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: mcblair/configure-aws-profile-action@v0.1.1
+        with:
+          profile-name: backstage
+          role-arn: ${{ vars.AWS_APPLY_ROLE_ARN }}
+          region: eu-west-1
+      - run: |
+          aws s3 rm \
+            s3://backstage-terraform-plan-outputs/${{ github.event.pull_request.number }} \
+            --recursive \
+            --include "*"
