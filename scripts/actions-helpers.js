@@ -168,7 +168,7 @@ Make sure all merge conflicts are resolved, all required status checks have pass
   }
 
   if (!config) {
-    postComment('@' + user + ' you must specify the config you wish to apply (eg `/apply letterfest/core`).')
+    postComment('@' + user + ' you must specify the config you wish to apply (eg `/apply domain`).')
     return core.setFailed('Missing config')
   }
 
