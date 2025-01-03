@@ -88,11 +88,12 @@ jobs:
       - name: apply
         id: apply
         run: |
+          exec &> >(tee -a /tmp/${{ github.run_id }}.apply.txt)
           aws s3 cp \
-            s3://backstage-terraform-plan-outputs/${{ github.event.pull_request.number }}/${{ matrix.config }}.out \
+            s3://backstage-terraform-plan-outputs/${{ github.event.issue.number }}/${{ needs.check-approval.outputs.config }}.out \
             plan.out \
             --profile backstage
-          terraform apply -no-color plan.out 2>&1  | tee /tmp/${{ github.run_id }}.apply.txt
+          terraform apply -no-color plan.out 2>&1
       - name: status check
         if: always()
         uses: actions/github-script@v7
