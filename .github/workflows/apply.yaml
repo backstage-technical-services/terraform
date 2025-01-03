@@ -87,7 +87,12 @@ jobs:
         run: terraform init -no-color 2>&1 | tee /tmp/${{ github.run_id }}.init.txt
       - name: apply
         id: apply
-        run: terraform apply -auto-approve -no-color 2>&1  | tee /tmp/${{ github.run_id }}.apply.txt
+        run: |
+          aws s3 cp \
+            s3://backstage-terraform-plan-outputs/${{ github.event.pull_request.number }}/${{ matrix.config }}.out \
+            plan.out \
+            --profile backstage
+          terraform apply -no-color plan.out 2>&1  | tee /tmp/${{ github.run_id }}.apply.txt
       - name: status check
         if: always()
         uses: actions/github-script@v7
