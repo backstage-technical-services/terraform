@@ -24,4 +24,5 @@ jobs:
           aws s3 rm \
             s3://backstage-terraform-plan-outputs/${{ github.event.pull_request.number }} \
             --recursive \
-            --include "*"
+            --include "*" \
+            --profile backstage
