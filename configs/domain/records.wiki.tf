@@ -1,10 +1,10 @@
 ########################################################################################################################
-# pbx.bts-crew.com
+# wiki.bts-crew.com
 ########################################################################################################################
-resource "aws_route53_record" "pbx" {
+resource "aws_route53_record" "wiki" {
   zone_id = aws_route53_zone.bts_crew_com.id
-  name    = "pbx"
-  type    = "A"
-  records = ["138.38.11.61"]
+  name    = "wiki"
+  type    = "CNAME"
+  records = ["bts-wiki.su.bath.ac.uk"]
   ttl     = 60
 }
