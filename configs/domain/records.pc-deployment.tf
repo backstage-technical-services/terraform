@@ -1,7 +1,7 @@
 ########################################################################################################################
 # pc-deployment.bts-crew.com
 ########################################################################################################################
-resource "aws_route53_record" "bts-pxesrv" {
+resource "aws_route53_record" "bts_pxesrv" {
   zone_id = aws_route53_zone.bts_crew_com.id
   name    = "pc-deployment"
   type    = "CNAME"
