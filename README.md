@@ -18,7 +18,7 @@ We make use of a pseudo-"[Terraservices][terraservices]" pattern to organise cod
 configurations in the `configs` directory:
 
 - `databases`: The configuration for our databases (mariadb and postgres).
-- `domain`: DNS records for `bts-crew.com` and `bts-finance.co.uk`.
+- `domains`: DNS configuration for the `bts-crew.com` and `bts-finance.co.uk` domains.
 - `k3s`: The configuration for our K3S node (VM).
 - `kubernetes`: Any global Kubernetes objects that do not have their own repo in the GitHub organisation.
 - `sites`: Any configuration (eg, SSM parameters for sensitive values) for our each of our sites.
