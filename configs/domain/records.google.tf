@@ -1,7 +1,7 @@
 ########################################################################################################################
 # mail.bts-crew.com
 ########################################################################################################################
-resource "aws_route53_record" "CNAME_mail" {
+resource "aws_route53_record" "CNAME_mail" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_crew_com.id
   name    = "mail"
   type    = "CNAME"
@@ -12,7 +12,7 @@ resource "aws_route53_record" "CNAME_mail" {
 ########################################################################################################################
 # drive.bts-crew.com
 ########################################################################################################################
-resource "aws_route53_record" "CNAME_drive" {
+resource "aws_route53_record" "CNAME_drive" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_crew_com.id
   name    = "drive"
   type    = "CNAME"

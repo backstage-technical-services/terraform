@@ -20,8 +20,8 @@ rule "terraform_naming_convention" {
   format = "snake_case"
   custom_formats = {
     module = {
-      description = "^_?[a-z]+(_[a-z]+)*$"
-      regex = "^_?[a-z]+(_[a-z]+)*$"
+      description = "^_?[a-z]+(_[a-z0-9]+)*$"
+      regex = "^_?[a-z]+(_[a-z0-9]+)*$"
     }
     block = {
       description = "^[a-z][a-z0-9]*(_[a-zA-Z][a-zA-Z0-9]*)*$"

@@ -1,4 +1,4 @@
-resource "aws_route53_record" "MX_bts_crew_com" {
+resource "aws_route53_record" "MX_bts_crew_com" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_crew_com.id
   name    = ""
   type    = "MX"

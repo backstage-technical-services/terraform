@@ -1,4 +1,4 @@
-resource "aws_route53_record" "CNAME_domainconnect" {
+resource "aws_route53_record" "CNAME_domainconnect" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_crew_com.id
   name    = "_domainconnect"
   type    = "CNAME"
@@ -6,7 +6,7 @@ resource "aws_route53_record" "CNAME_domainconnect" {
   ttl     = 600
 }
 
-resource "aws_route53_record" "TXT_bts_crew_com" {
+resource "aws_route53_record" "TXT_bts_crew_com" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_crew_com.id
   name    = ""
   type    = "TXT"
@@ -14,7 +14,7 @@ resource "aws_route53_record" "TXT_bts_crew_com" {
   ttl     = 600
 }
 
-resource "aws_route53_record" "TXT_google_site_verification" {
+resource "aws_route53_record" "TXT_google_site_verification" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_crew_com.id
   name    = "google-site-verification"
   type    = "TXT"
@@ -22,7 +22,7 @@ resource "aws_route53_record" "TXT_google_site_verification" {
   ttl     = 600
 }
 
-resource "aws_route53_record" "TXT_google_domain_key" {
+resource "aws_route53_record" "TXT_google_domain_key" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_crew_com.id
   name    = "google._domainkey"
   type    = "TXT"
@@ -30,7 +30,7 @@ resource "aws_route53_record" "TXT_google_domain_key" {
   ttl     = 600
 }
 
-resource "aws_route53_record" "TXT_github_challenge" {
+resource "aws_route53_record" "TXT_github_challenge" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_crew_com.id
   name    = "_github-challenge-backstage-technical-services"
   type    = "TXT"

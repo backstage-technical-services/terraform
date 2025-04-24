@@ -5,35 +5,35 @@ resource "aws_route53_zone" "bts_finance_co_uk" {
 ########################################################################################################################
 # Web
 ########################################################################################################################
-resource "aws_route53_record" "A_bts_finance_co_uk" {
+resource "aws_route53_record" "A_bts_finance_co_uk" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_finance_co_uk.id
   name    = ""
   type    = "A"
   ttl     = 60
   records = ["69.163.179.6"]
 }
-resource "aws_route53_record" "A_www_bts_finance_co_uk" {
+resource "aws_route53_record" "A_www_bts_finance_co_uk" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_finance_co_uk.id
   name    = "www"
   type    = "A"
   ttl     = 60
   records = ["69.163.179.6"]
 }
-resource "aws_route53_record" "A_ftp_bts_finance_co_uk" {
+resource "aws_route53_record" "A_ftp_bts_finance_co_uk" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_finance_co_uk.id
   name    = "ftp"
   type    = "A"
   ttl     = 60
   records = ["69.163.179.6"]
 }
-resource "aws_route53_record" "A_ssh_bts_finance_co_uk" {
+resource "aws_route53_record" "A_ssh_bts_finance_co_uk" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_finance_co_uk.id
   name    = "ssh"
   type    = "A"
   ttl     = 60
   records = ["69.163.179.6"]
 }
-resource "aws_route53_record" "A_mysql_bts_finance_co_uk" {
+resource "aws_route53_record" "A_mysql_bts_finance_co_uk" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_finance_co_uk.id
   name    = "mysql"
   type    = "A"
@@ -44,7 +44,7 @@ resource "aws_route53_record" "A_mysql_bts_finance_co_uk" {
 ########################################################################################################################
 # Mail
 ########################################################################################################################
-resource "aws_route53_record" "MX_bts_finance_co_uk" {
+resource "aws_route53_record" "MX_bts_finance_co_uk" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_finance_co_uk.id
   name    = ""
   type    = "MX"
@@ -59,7 +59,7 @@ resource "aws_route53_record" "MX_bts_finance_co_uk" {
     "30 ASPMX5.GOOGLEMAIL.COM",
   ]
 }
-resource "aws_route53_record" "CNAME_mail_bts_finance_co_uk" {
+resource "aws_route53_record" "CNAME_mail_bts_finance_co_uk" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_finance_co_uk.id
   name    = "mail"
   type    = "CNAME"
@@ -70,7 +70,7 @@ resource "aws_route53_record" "CNAME_mail_bts_finance_co_uk" {
 ########################################################################################################################
 # Misc
 ########################################################################################################################
-resource "aws_route53_record" "TXT_acme_challenge_bts_finance_co_uk" {
+resource "aws_route53_record" "TXT_acme_challenge_bts_finance_co_uk" { # tflint-ignore: terraform_naming_convention
   zone_id = aws_route53_zone.bts_finance_co_uk.id
   name    = "_acme-challenge"
   type    = "TXT"
