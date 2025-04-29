@@ -160,6 +160,12 @@ module "bts_finance_co_uk" {
       records = ["sKQM-6DlAQ25wv-AsLZ-aHpDO3_uu2_95iP9_6X_1k0"]
     },
     {
+      name    = "_gh-backstage-technical-services-o"
+      type    = "TXT"
+      ttl     = 600
+      records = ["5345929fe0"]
+    },
+    {
       name    = "ftp"
       type    = "A"
       records = ["69.163.179.6"]
