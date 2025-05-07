@@ -39,7 +39,7 @@ module "node" {
 
   meta          = local.meta
   ami           = data.aws_ami.default
-  instance_type = "t4g.small"
+  instance_type = "t4g.large"
   vpc           = data.terraform_remote_state.base_infra.outputs.vpc
 
   instance_profile_arn        = data.aws_iam_instance_profile.master_node.arn
@@ -53,7 +53,6 @@ module "node" {
     "bnjns.uk/reserved-for" = "backstage"
   }
 
-  root_volume_size = 30
   volumes = {
     sdf = aws_ebs_volume.node_data.id
   }
