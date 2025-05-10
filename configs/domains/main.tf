@@ -116,11 +116,30 @@ module "bts_crew_com" {
       type    = "CNAME"
       records = ["bts-telephony.su.bath.ac.uk"]
     },
-
     {
       name    = "wiki"
       type    = "CNAME"
       records = ["bts-wiki.su.bath.ac.uk"]
+    },
+    {
+      name    = "lists"
+      type    = "CNAME"
+      records = ["bts-mail.su.bath.ac.uk"]
+    },
+    {
+      name    = "em977232.lists"
+      type    = "CNAME"
+      records = ["return.smtp2go.net"]
+    },
+    {
+      name    = "s977232._domainkey.lists"
+      type    = "CNAME"
+      records = ["dkim.smtp2go.net"]
+    },
+    {
+      name    = "link.lists"
+      type    = "CNAME"
+      records = ["track.smtp2go.net"]
     },
     {
       name    = "www"
