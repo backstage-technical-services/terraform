@@ -19,8 +19,11 @@ module "mariadb_10_4" {
   default_annotations = local.default_annotations
 
   resources = {
-    limits = {
+    requests = {
       memory = "256Mi"
+    }
+    limits = {
+      memory = "512Mi"
     }
   }
 }
