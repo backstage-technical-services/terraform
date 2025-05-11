@@ -80,15 +80,11 @@ resource "kubernetes_stateful_set_v1" "default" {
           }
 
           dynamic "resources" {
-            for_each = var.memory_limit != null ? [1] : []
+            for_each = var.resources != null ? [1] : []
 
             content {
-              requests = {
-                memory = var.memory_limit
-              }
-              limits = {
-                memory = var.memory_limit
-              }
+              requests = var.resources.requests
+              limits   = var.resources.limits
             }
           }
         }

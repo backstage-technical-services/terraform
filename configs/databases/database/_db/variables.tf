@@ -32,7 +32,16 @@ variable "env" {
   type    = map(string)
   default = {}
 }
-variable "memory_limit" {
-  type    = string
+variable "resources" {
+  type = object({
+    requests = optional(object({
+      cpu    = optional(string)
+      memory = optional(string)
+    }))
+    limits = optional(object({
+      cpu    = optional(string)
+      memory = optional(string)
+    }))
+  })
   default = null
 }
