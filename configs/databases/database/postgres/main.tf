@@ -4,8 +4,17 @@ variable "engine_version" {
 variable "default_annotations" {
   type = map(string)
 }
-variable "memory_limit" {
-  type    = string
+variable "resources" {
+  type = object({
+    requests = optional(object({
+      cpu    = optional(string)
+      memory = optional(string)
+    }))
+    limits = optional(object({
+      cpu    = optional(string)
+      memory = optional(string)
+    }))
+  })
   default = null
 }
 
@@ -28,7 +37,7 @@ module "this" {
     POSTGRES_PASSWORD = random_password.root_password.result
   }
 
-  memory_limit = var.memory_limit
+  resources = var.resources
 }
 
 resource "random_pet" "root_username" {
