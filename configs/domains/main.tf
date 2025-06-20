@@ -116,11 +116,15 @@ module "bts_crew_com" {
       type    = "CNAME"
       records = ["bts-telephony.su.bath.ac.uk"]
     },
-
     {
       name    = "wiki"
       type    = "CNAME"
       records = ["bts-wiki.su.bath.ac.uk"]
+    },
+    {
+      name    = "sso"
+      type    = "CNAME"
+      records = ["bts-auth.su.bath.ac.uk"]
     },
     {
       name    = "www"
