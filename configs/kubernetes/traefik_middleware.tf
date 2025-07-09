@@ -1,3 +1,22 @@
+resource "kubernetes_manifest" "traefik_middleware_rate_limit" {
+  manifest = {
+    apiVersion = "traefik.io/v1alpha1"
+    kind       = "Middleware"
+    metadata = {
+      name        = "rate-limit"
+      namespace   = kubernetes_namespace.backstage.metadata[0].name
+      annotations = local.default_annotations
+    }
+    spec = {
+      rateLimit = {
+        average = 10
+        burst   = 100
+        period  = "1s"
+      }
+    }
+  }
+}
+
 resource "kubernetes_manifest" "traefik_middleware_http_https" {
   manifest = {
     apiVersion = "traefik.io/v1alpha1"
