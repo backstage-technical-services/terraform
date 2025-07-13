@@ -2,21 +2,20 @@ locals {
   maildev_selector_labels = {
     "backstage.uk/component" = "maildev"
   }
-  maildev_labels = merge({
-    "app.kubernetes.io/name"       = "maildev"
-    "app.kubernetes.io/managed-by" = "Terraform"
+  maildev_labels = merge(local.default_labels, {
+    "bnjns.uk/app"           = "maildev"
+    "app.kubernetes.io/name" = "maildev"
   }, local.maildev_selector_labels)
 
-  maildev_smtp_port = 25
-  maildev_web_port  = 8080
+  maildev_smtp_port = 1025
+  maildev_web_port  = 1080
 }
 
 resource "kubernetes_service_v1" "maildev" {
   metadata {
-    namespace   = "backstage"
-    name        = "maildev"
-    annotations = local.default_annotations
-    labels      = local.maildev_labels
+    namespace = kubernetes_namespace.backstage.metadata[0].name
+    name      = "maildev"
+    labels    = local.maildev_labels
   }
 
   spec {
@@ -37,10 +36,9 @@ resource "kubernetes_service_v1" "maildev" {
 
 resource "kubernetes_stateful_set_v1" "maildev" {
   metadata {
-    namespace   = "backstage"
-    name        = "maildev"
-    annotations = local.default_annotations
-    labels      = local.maildev_labels
+    namespace = kubernetes_namespace.backstage.metadata[0].name
+    name      = "maildev"
+    labels    = local.maildev_labels
   }
 
   spec {
@@ -53,10 +51,9 @@ resource "kubernetes_stateful_set_v1" "maildev" {
 
     template {
       metadata {
-        namespace   = "backstage"
-        name        = "maildev"
-        annotations = local.default_annotations
-        labels      = local.maildev_labels
+        namespace = kubernetes_namespace.backstage.metadata[0].name
+        name      = "maildev"
+        labels    = local.maildev_labels
       }
 
       spec {

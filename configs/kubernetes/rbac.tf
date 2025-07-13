@@ -3,9 +3,9 @@
 ########################################################################################################################
 resource "kubernetes_role_v1" "backstage_admin" {
   metadata {
-    namespace   = "backstage"
-    name        = "backstage:admin"
-    annotations = local.default_annotations
+    namespace = kubernetes_namespace.backstage.metadata[0].name
+    name      = "backstage:admin"
+    labels    = local.default_labels
   }
 
   rule {
@@ -16,9 +16,9 @@ resource "kubernetes_role_v1" "backstage_admin" {
 }
 resource "kubernetes_role_binding_v1" "backstage_admin" {
   metadata {
-    namespace   = "backstage"
-    name        = "backstage:admin"
-    annotations = local.default_annotations
+    namespace = kubernetes_namespace.backstage.metadata[0].name
+    name      = "backstage:admin"
+    labels    = local.default_labels
   }
 
   role_ref {
@@ -39,9 +39,9 @@ resource "kubernetes_role_binding_v1" "backstage_admin" {
 ########################################################################################################################
 resource "kubernetes_role_v1" "backstage_dev" {
   metadata {
-    namespace   = "backstage"
-    name        = "backstage:dev"
-    annotations = local.default_annotations
+    namespace = kubernetes_namespace.backstage.metadata[0].name
+    name      = "backstage:dev"
+    labels    = local.default_labels
   }
 
   rule {
@@ -58,9 +58,9 @@ resource "kubernetes_role_v1" "backstage_dev" {
 }
 resource "kubernetes_role_binding_v1" "backstage_dev" {
   metadata {
-    namespace   = "backstage"
-    name        = "backstage:dev"
-    annotations = local.default_annotations
+    namespace = kubernetes_namespace.backstage.metadata[0].name
+    name      = "backstage:dev"
+    labels    = local.default_labels
   }
 
   role_ref {

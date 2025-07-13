@@ -1,8 +1,8 @@
 resource "kubernetes_service_account_v1" "github_actions" {
   metadata {
-    namespace   = "backstage"
-    name        = "github-actions"
-    annotations = local.default_annotations
+    namespace = kubernetes_namespace.backstage.metadata[0].name
+    name      = "github-actions"
+    labels    = local.default_labels
   }
 }
 
@@ -10,11 +10,12 @@ resource "kubernetes_secret_v1" "github_actions_token" {
   type = "kubernetes.io/service-account-token"
 
   metadata {
-    namespace = "backstage"
+    namespace = kubernetes_namespace.backstage.metadata[0].name
     name      = "github-actions-service-account-token"
-    annotations = merge(local.default_annotations, {
+    annotations = {
       "kubernetes.io/service-account.name" = kubernetes_service_account_v1.github_actions.metadata[0].name
-    })
+    }
+    labels = local.default_labels
   }
 }
 
@@ -23,8 +24,8 @@ resource "kubernetes_secret_v1" "github_actions_token" {
 ########################################################################################################################
 resource "kubernetes_cluster_role_v1" "github_actions" {
   metadata {
-    name        = "backstage:github-actions"
-    annotations = local.default_annotations
+    name   = "backstage:github-actions"
+    labels = local.default_labels
   }
 
   rule {
@@ -35,8 +36,8 @@ resource "kubernetes_cluster_role_v1" "github_actions" {
 }
 resource "kubernetes_cluster_role_binding_v1" "github_actions" {
   metadata {
-    name        = "backstage:github-actions"
-    annotations = local.default_annotations
+    name   = "backstage:github-actions"
+    labels = local.default_labels
   }
 
   role_ref {
@@ -47,7 +48,7 @@ resource "kubernetes_cluster_role_binding_v1" "github_actions" {
 
   subject {
     kind      = "ServiceAccount"
-    namespace = "backstage"
+    namespace = kubernetes_namespace.backstage.metadata[0].name
     name      = kubernetes_service_account_v1.github_actions.metadata[0].name
   }
 }
@@ -57,9 +58,9 @@ resource "kubernetes_cluster_role_binding_v1" "github_actions" {
 ########################################################################################################################
 resource "kubernetes_role_v1" "github_actions" {
   metadata {
-    namespace   = "backstage"
-    name        = "backstage:github-actions"
-    annotations = local.default_annotations
+    namespace = kubernetes_namespace.backstage.metadata[0].name
+    name      = "backstage:github-actions"
+    labels    = local.default_labels
   }
 
   rule {
@@ -107,9 +108,9 @@ resource "kubernetes_role_v1" "github_actions" {
 
 resource "kubernetes_role_binding_v1" "github_actions" {
   metadata {
-    namespace   = "backstage"
-    name        = "backstage:github-actions"
-    annotations = local.default_annotations
+    namespace = kubernetes_namespace.backstage.metadata[0].name
+    name      = "backstage:github-actions"
+    labels    = local.default_labels
   }
 
   role_ref {
@@ -120,7 +121,7 @@ resource "kubernetes_role_binding_v1" "github_actions" {
 
   subject {
     kind      = "ServiceAccount"
-    namespace = "backstage"
+    namespace = kubernetes_namespace.backstage.metadata[0].name
     name      = kubernetes_service_account_v1.github_actions.metadata[0].name
   }
 }

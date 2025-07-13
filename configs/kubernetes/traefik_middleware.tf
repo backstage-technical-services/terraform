@@ -3,9 +3,9 @@ resource "kubernetes_manifest" "traefik_middleware_rate_limit" {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "Middleware"
     metadata = {
-      name        = "rate-limit"
-      namespace   = kubernetes_namespace.backstage.metadata[0].name
-      annotations = local.default_annotations
+      name      = "rate-limit"
+      namespace = kubernetes_namespace.backstage.metadata[0].name
+      labels    = local.default_labels
     }
     spec = {
       rateLimit = {
@@ -22,9 +22,9 @@ resource "kubernetes_manifest" "traefik_middleware_http_https" {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "Middleware"
     metadata = {
-      name        = "redirect-http-to-https"
-      namespace   = kubernetes_namespace.backstage.metadata[0].name
-      annotations = local.default_annotations
+      name      = "redirect-http-to-https"
+      namespace = kubernetes_namespace.backstage.metadata[0].name
+      labels    = local.default_labels
     }
     spec = {
       redirectScheme = {
@@ -37,9 +37,9 @@ resource "kubernetes_manifest" "traefik_middleware_http_https" {
 
 resource "kubernetes_secret" "traefik_middleware_basic_auth" {
   metadata {
-    name        = "basic-auth-users"
-    namespace   = kubernetes_namespace.backstage.metadata[0].name
-    annotations = local.default_annotations
+    name      = "basic-auth-users"
+    namespace = kubernetes_namespace.backstage.metadata[0].name
+    labels    = local.default_labels
   }
 
   data = {
@@ -56,9 +56,9 @@ resource "kubernetes_manifest" "traefik_middleware_basic_auth" {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "Middleware"
     metadata = {
-      namespace   = kubernetes_namespace.backstage.metadata[0].name
-      name        = "basic-auth"
-      annotations = local.default_annotations
+      namespace = kubernetes_namespace.backstage.metadata[0].name
+      name      = "basic-auth"
+      labels    = local.default_labels
     }
     spec = {
       basicAuth = {
@@ -74,14 +74,14 @@ resource "kubernetes_manifest" "traefik_middleware_ip_allowlist_internal" {
     apiVersion = "traefik.io/v1alpha1"
     kind       = "Middleware"
     metadata = {
-      namespace   = kubernetes_namespace.backstage.metadata[0].name
-      name        = "ip-allowlist-internal"
-      annotations = local.default_annotations
+      namespace = kubernetes_namespace.backstage.metadata[0].name
+      name      = "ip-allowlist-internal"
+      labels    = local.default_labels
     }
     spec = {
       ipWhiteList = {
         sourceRange = [
-          "10.42.0.0/16",
+          "172.20.0.0/16",
         ]
       }
     }
