@@ -55,16 +55,6 @@ module "bts_crew_com" {
       records = ["6193c4ccc3"]
     },
     {
-      name    = "assets"
-      type    = "A"
-      records = [data.aws_eip.k3s_node.public_ip]
-    },
-    {
-      name    = "auth"
-      type    = "A"
-      records = [data.aws_eip.k3s_node.public_ip]
-    },
-    {
       name    = "drive"
       type    = "CNAME"
       records = ["ghs.googlehosted.com"]
