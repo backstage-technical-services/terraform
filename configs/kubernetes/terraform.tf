@@ -25,6 +25,10 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "~> 2.0"
     }
+    github = {
+      source  = "integrations/github"
+      version = "~> 6.0"
+    }
   }
 
   backend "s3" {
@@ -64,3 +68,8 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.bnjns.certificate_authority[0].data)
   token                  = data.aws_eks_cluster_auth.bnjns.token
 }
+
+########################################################################################################################
+# GitHub
+########################################################################################################################
+provider "github" {}

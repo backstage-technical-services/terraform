@@ -87,3 +87,28 @@ resource "kubernetes_manifest" "traefik_middleware_ip_allowlist_internal" {
     }
   }
 }
+
+
+data "github_ip_ranges" "current" {}
+resource "kubernetes_manifest" "traefik_middleware_ip_allowlist_trusted" {
+  manifest = {
+    apiVersion = "traefik.io/v1alpha1"
+    kind       = "Middleware"
+    metadata = {
+      namespace = kubernetes_namespace.backstage.metadata[0].name
+      name      = "ip-allowlist-trusted"
+      labels    = local.default_labels
+    }
+    spec = {
+      ipWhiteList = {
+        sourceRange = concat(
+          [
+            "172.20.0.0/16",
+            "88.97.244.202"
+          ],
+          data.github_ip_ranges.current.actions_ipv4,
+        )
+      }
+    }
+  }
+}
