@@ -17,6 +17,14 @@ resource "aws_security_group" "default" {
     to_port         = 0
     security_groups = [var.node_security_group_id]
   }
+
+  egress {
+    description     = "Allow egress to the node group"
+    protocol        = "-1"
+    from_port       = 0
+    to_port         = 0
+    security_groups = [var.node_security_group_id]
+  }
 }
 
 resource "aws_efs_mount_target" "default" {
