@@ -29,6 +29,15 @@ resource "kubernetes_cluster_role_v1" "github_actions" {
   }
 
   rule {
+    api_groups = [""]
+    resources = [
+      "persistentvolumes",
+      "persistentvolumeclaims",
+    ]
+    verbs = ["*"]
+  }
+
+  rule {
     api_groups = ["certificates.k8s.io"]
     resources  = ["certificatesigningrequests"]
     verbs      = ["create", "get"]
