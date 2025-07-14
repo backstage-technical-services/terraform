@@ -1,29 +1,8 @@
-locals {
-  default_tags = {
-    managed-by = "Terraform"
-    owner      = "backstage"
-    repo       = "backstage/terraform"
-    config     = try(regex("[^/]+$", path.cwd), "unknown")
-  }
-}
-
-data "aws_eip" "k3s_node" {
-  filter {
-    name   = "tag:Name"
-    values = ["backstage-k3s-worker"]
-  }
-}
-
 module "bts_crew_com" {
   source = "./domain"
 
   domain_name = "bts-crew.com"
   records = [
-    {
-      name    = ""
-      type    = "A"
-      records = [data.aws_eip.k3s_node.public_ip]
-    },
     {
       name = ""
       type = "MX"
@@ -97,11 +76,6 @@ module "bts_crew_com" {
       records = ["bts-pxesrv.su.bath.ac.uk"]
     },
     {
-      name    = "staging"
-      type    = "A"
-      records = [data.aws_eip.k3s_node.public_ip]
-    },
-    {
       name    = "telephony"
       type    = "CNAME"
       records = ["bts-telephony.su.bath.ac.uk"]
@@ -111,11 +85,6 @@ module "bts_crew_com" {
       name    = "wiki"
       type    = "CNAME"
       records = ["bts-wiki.su.bath.ac.uk"]
-    },
-    {
-      name    = "www"
-      type    = "A"
-      records = [data.aws_eip.k3s_node.public_ip]
     },
   ]
 }
