@@ -4,8 +4,10 @@ data "aws_efs_file_system" "backstage_data" {
 
 resource "kubernetes_persistent_volume_v1" "data" {
   metadata {
-    name   = "backstage-database-${local.component}"
-    labels = local.labels
+    name = "backstage-database-${local.component}"
+    labels = merge(local.labels, {
+      "backstage.uk/storage-name" = "database-${local.component}"
+    })
   }
 
   spec {
@@ -18,6 +20,10 @@ resource "kubernetes_persistent_volume_v1" "data" {
     capacity = {
       storage = var.storage_size
     }
+
+    mount_options = [
+      "tls"
+    ]
 
     persistent_volume_source {
       csi {
@@ -32,7 +38,9 @@ resource "kubernetes_persistent_volume_claim_v1" "data" {
   metadata {
     namespace = "backstage"
     name      = "database-${local.component}"
-    labels    = local.labels
+    labels = merge(local.labels, {
+      "backstage.uk/storage-name" = "database-${local.component}"
+    })
   }
 
   spec {
@@ -43,6 +51,12 @@ resource "kubernetes_persistent_volume_claim_v1" "data" {
       requests = {
         storage = var.storage_size
       }
+    }
+
+    selector {
+      match_labels = merge(local.selector_labels, {
+        "backstage.uk/storage-name" = "database-${local.component}"
+      })
     }
   }
 }
