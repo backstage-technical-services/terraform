@@ -66,6 +66,11 @@ module "bts_crew_com" {
       records = ["138.38.11.55"]
     },
     {
+      name    = "nextcloud"
+      type    = "CNAME"
+      records = ["bts-nextcloud.su.bath.ac.uk"]
+    },
+    {
       name    = "pbx"
       type    = "A"
       records = ["138.38.11.61"]
