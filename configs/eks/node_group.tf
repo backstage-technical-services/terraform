@@ -3,7 +3,7 @@ data "aws_security_group" "node_group_standard_arm64" {
 }
 
 module "node_group" {
-  source = "git@github.com:bnjns/terraform.git//configs/eks/node-group?ref=3d9cc01b48456afde4b7a5d83774131d0c6b72c0"
+  source = "git@github.com:bnjns/terraform.git//configs/eks/node-group?ref=44743eddd1b62cdaeedbf2776c9658cf89607f58"
 
   name         = "backstage"
   owner        = "backstage"
