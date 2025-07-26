@@ -21,14 +21,13 @@ resource "kubernetes_persistent_volume_v1" "data" {
       storage = var.storage_size
     }
 
-    mount_options = [
-      "tls"
-    ]
-
     persistent_volume_source {
       csi {
         driver        = "efs.csi.aws.com"
         volume_handle = "${data.aws_efs_file_system.backstage_data.file_system_id}::${var.access_point_id}"
+        volume_attributes = {
+          encryptInTransit = "true"
+        }
       }
     }
   }
