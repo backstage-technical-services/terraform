@@ -10,6 +10,9 @@ locals {
     config     = local.meta.config
   }
   default_labels = { for k, v in local.default_tags : "bnjns.uk/${k}" => v if !strcontains(v, "/") }
+  # default_labels = merge({ for k, v in local.default_tags : "bnjns.uk/${k}" => v if !strcontains(v, "/") }, {
+  #   "app.kubernetes.io/managed-by" = "Terraform"
+  # })
 }
 
 
@@ -28,6 +31,10 @@ terraform {
     github = {
       source  = "integrations/github"
       version = "~> 6.0"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 3.0"
     }
   }
 
@@ -73,3 +80,14 @@ provider "kubernetes" {
 # GitHub
 ########################################################################################################################
 provider "github" {}
+
+########################################################################################################################
+# Helm
+########################################################################################################################
+provider "helm" {
+  kubernetes = {
+    host                   = data.aws_eks_cluster.bnjns.endpoint
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.bnjns.certificate_authority[0].data)
+    token                  = data.aws_eks_cluster_auth.bnjns.token
+  }
+}
