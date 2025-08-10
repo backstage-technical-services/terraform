@@ -1,18 +1,16 @@
-data "aws_region" "current" {}
-data "aws_caller_identity" "current" {}
-
 locals {
   meta = {
-    owner     = "backstage"
-    component = try(regex("[^/]+$", path.cwd), "unknown")
+    owner  = "backstage"
+    config = try(regex("configs/(.*)$", path.cwd)[0], "unknown")
   }
   default_tags = {
     managed-by = "Terraform"
     owner      = local.meta.owner
     repo       = "backstage/terraform"
-    config     = local.meta.component
+    config     = local.meta.config
   }
 }
+
 
 terraform {
   required_version = "~> 1.7"
@@ -20,13 +18,13 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 6.0"
     }
   }
 
   backend "s3" {
     bucket         = "bnjns-terraform"
-    key            = "backstage/base-infra.tfstate"
+    key            = "backstage/eks.tfstate"
     dynamodb_table = "bnjns-terraform-lock"
     encrypt        = true
     region         = "eu-west-1"

@@ -1,3 +1,16 @@
+locals {
+  meta = {
+    owner  = "backstage"
+    config = try(regex("configs/(.*)$", path.cwd)[0], "unknown")
+  }
+  default_tags = {
+    managed-by = "Terraform"
+    owner      = local.meta.owner
+    repo       = "backstage/terraform"
+    config     = local.meta.config
+  }
+}
+
 terraform {
   required_version = "~> 1.7"
 

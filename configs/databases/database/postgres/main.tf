@@ -1,32 +1,15 @@
-variable "engine_version" {
-  type = string
-}
-variable "default_annotations" {
-  type = map(string)
-}
-variable "resources" {
-  type = object({
-    requests = optional(object({
-      cpu    = optional(string)
-      memory = optional(string)
-    }))
-    limits = optional(object({
-      cpu    = optional(string)
-      memory = optional(string)
-    }))
-  })
-  default = null
-}
-
 module "this" {
   source = "../_db"
 
-  default_annotations = var.default_annotations
+  default_labels = var.default_labels
 
   engine         = "postgres"
   engine_version = var.engine_version
   port           = 5432
-  data_dir       = "/var/lib/postgresql/data"
+
+  data_dir        = "/var/lib/postgresql/data"
+  storage_size    = var.storage_size
+  access_point_id = var.access_point_id
 
   env = {
     PGDATA = "/var/lib/postgresql/data"

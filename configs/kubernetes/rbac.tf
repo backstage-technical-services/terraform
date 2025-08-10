@@ -1,11 +1,10 @@
 ########################################################################################################################
-# backstage:admin
+# Roles
 ########################################################################################################################
-resource "kubernetes_role_v1" "backstage_admin" {
+resource "kubernetes_cluster_role_v1" "backstage_admin" {
   metadata {
-    namespace   = "backstage"
-    name        = "backstage:admin"
-    annotations = local.default_annotations
+    name   = "backstage:admin"
+    labels = local.default_labels
   }
 
   rule {
@@ -14,34 +13,11 @@ resource "kubernetes_role_v1" "backstage_admin" {
     resources  = ["*"]
   }
 }
-resource "kubernetes_role_binding_v1" "backstage_admin" {
+
+resource "kubernetes_cluster_role_v1" "backstage_dev" {
   metadata {
-    namespace   = "backstage"
-    name        = "backstage:admin"
-    annotations = local.default_annotations
-  }
-
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "Role"
-    name      = kubernetes_role_v1.backstage_admin.metadata[0].name
-  }
-
-  subject {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "Group"
-    name      = "backstage:admin"
-  }
-}
-
-########################################################################################################################
-# backstage:dev
-########################################################################################################################
-resource "kubernetes_role_v1" "backstage_dev" {
-  metadata {
-    namespace   = "backstage"
-    name        = "backstage:dev"
-    annotations = local.default_annotations
+    name   = "backstage:dev"
+    labels = local.default_labels
   }
 
   rule {
@@ -56,17 +32,84 @@ resource "kubernetes_role_v1" "backstage_dev" {
     resources  = ["pods"]
   }
 }
-resource "kubernetes_role_binding_v1" "backstage_dev" {
+
+########################################################################################################################
+# RoleBinding: backstage:admin
+########################################################################################################################
+resource "kubernetes_role_binding_v1" "backstage_admin" {
   metadata {
-    namespace   = "backstage"
-    name        = "backstage:dev"
-    annotations = local.default_annotations
+    namespace = kubernetes_namespace.backstage.metadata[0].name
+    name      = "backstage:admin"
+    labels    = local.default_labels
   }
 
   role_ref {
     api_group = "rbac.authorization.k8s.io"
-    kind      = "Role"
-    name      = kubernetes_role_v1.backstage_dev.metadata[0].name
+    kind      = "ClusterRole"
+    name      = kubernetes_cluster_role_v1.backstage_admin.metadata[0].name
+  }
+
+  subject {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "Group"
+    name      = "backstage:admin"
+  }
+}
+
+resource "kubernetes_role_binding_v1" "backstage_admin_tailscale" {
+  metadata {
+    namespace = kubernetes_namespace_v1.backstage_tailscale.metadata[0].name
+    name      = "backstage:admin"
+    labels    = local.default_labels
+  }
+
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = kubernetes_cluster_role_v1.backstage_dev.metadata[0].name
+  }
+
+  subject {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "Group"
+    name      = "backstage:admin"
+  }
+}
+
+########################################################################################################################
+# RoleBinding: backstage:dev
+########################################################################################################################
+resource "kubernetes_role_binding_v1" "backstage_dev" {
+  metadata {
+    namespace = kubernetes_namespace.backstage.metadata[0].name
+    name      = "backstage:dev"
+    labels    = local.default_labels
+  }
+
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = kubernetes_cluster_role_v1.backstage_dev.metadata[0].name
+  }
+
+  subject {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "Group"
+    name      = "backstage:dev"
+  }
+}
+
+resource "kubernetes_role_binding_v1" "backstage_dev_tailscale" {
+  metadata {
+    namespace = kubernetes_namespace_v1.backstage_tailscale.metadata[0].name
+    name      = "backstage:dev"
+    labels    = local.default_labels
+  }
+
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = kubernetes_cluster_role_v1.backstage_dev.metadata[0].name
   }
 
   subject {

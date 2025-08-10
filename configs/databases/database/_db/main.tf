@@ -6,17 +6,16 @@ locals {
     "backstage.uk/engine"    = var.engine
     "backstage.uk/version"   = var.engine_version
   }
-  labels = merge(local.selector_labels, {
+  labels = merge(var.default_labels, local.selector_labels, {
     "app.kubernetes.io/name" = "database-${local.component}"
   })
 }
 
 resource "kubernetes_service_v1" "default" {
   metadata {
-    namespace   = "backstage"
-    name        = local.component
-    annotations = var.default_annotations
-    labels      = local.labels
+    namespace = "backstage"
+    name      = local.component
+    labels    = local.labels
   }
 
   spec {
@@ -31,10 +30,9 @@ resource "kubernetes_service_v1" "default" {
 
 resource "kubernetes_stateful_set_v1" "default" {
   metadata {
-    namespace   = "backstage"
-    name        = "database-${local.component}"
-    annotations = var.default_annotations
-    labels      = local.labels
+    namespace = "backstage"
+    name      = "database-${local.component}"
+    labels    = local.labels
   }
 
   spec {
@@ -47,10 +45,9 @@ resource "kubernetes_stateful_set_v1" "default" {
 
     template {
       metadata {
-        namespace   = "backstage"
-        name        = "database-${local.component}"
-        annotations = var.default_annotations
-        labels      = local.labels
+        namespace = "backstage"
+        name      = "database-${local.component}"
+        labels    = local.labels
       }
 
       spec {
@@ -92,8 +89,8 @@ resource "kubernetes_stateful_set_v1" "default" {
         volume {
           name = "data"
 
-          host_path {
-            path = "/opt/data/backstage/database/${local.component}"
+          persistent_volume_claim {
+            claim_name = kubernetes_persistent_volume_claim_v1.data.metadata[0].name
           }
         }
 
