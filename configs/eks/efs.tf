@@ -11,6 +11,7 @@ module "data_efs" {
   access_points = [
     { directory = "/database/mariadb-10-4", uid = 999, gid = 999 },
     { directory = "/database/postgres-16", uid = 0, gid = 0 },
+    { directory = "/openldap", uid = 1001, gid = 1001 },
     { directory = "/website-v4/prod", uid = 82, gid = 82 },
     { directory = "/website-v4/staging", uid = 82, gid = 82 },
   ]
