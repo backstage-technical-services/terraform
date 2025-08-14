@@ -2,7 +2,7 @@ module "oidc_terraform_plan" {
   source = "./oidc-role"
 
   name         = "terraform-plan"
-  repositories = ["terraform"]
+  repositories = ["terraform", "keycloak"]
 
   policy_arns = ["arn:aws:iam::aws:policy/ReadOnlyAccess"]
   inline_policies = {

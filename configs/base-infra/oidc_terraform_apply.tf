@@ -2,7 +2,7 @@ module "oidc_terraform_apply" {
   source = "./oidc-role"
 
   name         = "terraform-apply"
-  repositories = ["terraform"]
+  repositories = ["terraform", "keycloak"]
 
   policy_arns = ["arn:aws:iam::aws:policy/AdministratorAccess"]
   inline_policies = {
