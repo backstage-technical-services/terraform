@@ -113,6 +113,18 @@ resource "kubernetes_role_v1" "github_actions" {
     resources  = ["externalsecrets"]
     verbs      = ["*"]
   }
+
+  rule {
+    api_groups = ["cert-manager.io"]
+    resources  = ["certificates"]
+    verbs      = ["*"]
+  }
+
+  rule {
+    api_groups = ["traefik.io"]
+    resources  = ["ingressroutes"]
+    verbs      = ["*"]
+  }
 }
 
 resource "kubernetes_role_binding_v1" "github_actions" {
