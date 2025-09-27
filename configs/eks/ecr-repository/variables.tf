@@ -24,5 +24,5 @@ variable "expire_untagged_images_after" {
 variable "num_images_to_keep" {
   type        = number
   description = "The maximum number of images to keep in the ECR."
-  default     = 10
+  default     = 25
 }
