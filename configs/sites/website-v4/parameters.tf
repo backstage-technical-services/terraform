@@ -31,6 +31,19 @@ resource "aws_ssm_parameter" "db_credentials" {
   }
 }
 
+resource "aws_ssm_parameter" "keycloak_credentials" {
+  name = "${var.ssm_prefix}/keycloak-credentials"
+  type = "SecureString"
+  value = jsonencode({
+    clientId     = ""
+    clientSecret = ""
+  })
+
+  lifecycle {
+    ignore_changes = [value]
+  }
+}
+
 resource "aws_ssm_parameter" "log_level" {
   name  = "${var.ssm_prefix}/log-level"
   type  = "String"
