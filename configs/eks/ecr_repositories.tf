@@ -7,7 +7,7 @@ locals {
 }
 
 module "ecr_repository" {
-  source = "./ecr-repository"
+  source = "../../modules/ecr-repository"
 
   for_each  = toset(local.ecr_repositories)
   component = each.key
