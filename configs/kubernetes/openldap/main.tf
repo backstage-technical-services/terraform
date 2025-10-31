@@ -5,6 +5,8 @@ locals {
   labels = merge(var.labels, local.selector_labels, {
     "app.kubernetes.io/name" = "openldap"
   })
+
+  root_dn = "dc=ldap,dc=bts-crew,dc=com"
 }
 
 resource "kubernetes_service_v1" "default" {
@@ -57,28 +59,48 @@ resource "kubernetes_stateful_set_v1" "default" {
           image_pull_policy = "IfNotPresent"
 
           env {
+            name  = "LDAP_CONFIG_ADMIN_ENABLED"
+            value = "yes"
+          }
+
+          env {
+            name  = "LDAP_CONFIG_ADMIN_USERNAME"
+            value = "admin"
+          }
+
+          env {
             name  = "LDAP_ADMIN_USERNAME"
             value = "admin"
           }
 
           env {
             name  = "LDAP_ROOT"
-            value = "dc=ldap,dc=bts-crew,dc=com"
+            value = local.root_dn
           }
 
           env {
             name  = "LDAP_ADMIN_DN"
-            value = "cn=admin,dc=ldap,dc=bts-crew,dc=com"
+            value = "cn=admin,${local.root_dn}"
           }
 
           env {
-            name  = "LDAP_USER_OU"
-            value = "users"
+            name  = "LDAP_SKIP_DEFAULT_TREE"
+            value = "yes"
           }
 
           env {
-            name  = "LDAP_GROUP_OU"
-            value = "groups"
+            name  = "LDAP_CUSTOM_LDIF_DIR"
+            value = "/ldifs/bootstrap"
+          }
+
+          env {
+            name  = "LDAP_CONFIGURE_PPOLICY"
+            value = "yes"
+          }
+
+          env {
+            name  = "LDAP_PPOLICY_HASH_CLEARTEXT"
+            value = "yes"
           }
 
           env_from {
@@ -87,9 +109,44 @@ resource "kubernetes_stateful_set_v1" "default" {
             }
           }
 
+          resources {
+            requests = {
+              memory = "128Mi"
+            }
+            limits = {
+              memory = "265Mi"
+            }
+          }
+
+          volume_mount {
+            name       = "ldifs-bootstrap"
+            mount_path = "/ldifs/bootstrap"
+          }
+
+          volume_mount {
+            name       = "ldifs-misc"
+            mount_path = "/ldifs/misc"
+          }
+
           volume_mount {
             name       = "data"
             mount_path = "/bitnami/openldap"
+          }
+        }
+
+        volume {
+          name = "ldifs-bootstrap"
+
+          config_map {
+            name = kubernetes_config_map_v1.ldifs_bootstrap.metadata[0].name
+          }
+        }
+
+        volume {
+          name = "ldifs-misc"
+
+          config_map {
+            name = kubernetes_config_map_v1.ldifs_misc.metadata[0].name
           }
         }
 
@@ -116,6 +173,8 @@ resource "kubernetes_stateful_set_v1" "default" {
   }
 
   depends_on = [
+    kubernetes_config_map_v1.ldifs_bootstrap,
+    kubernetes_config_map_v1.ldifs_misc,
     kubernetes_manifest.external_secrets,
   ]
 }
