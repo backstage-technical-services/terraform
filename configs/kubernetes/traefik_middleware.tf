@@ -104,7 +104,7 @@ resource "kubernetes_manifest" "traefik_middleware_ip_allowlist_trusted" {
         sourceRange = concat(
           [
             "172.20.0.0/16",
-            "88.97.244.7",
+            "88.97.220.48",
             "138.38.0.0/16",
           ],
           data.github_ip_ranges.current.actions_ipv4,
