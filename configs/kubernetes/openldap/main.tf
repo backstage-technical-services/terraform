@@ -55,7 +55,7 @@ resource "kubernetes_stateful_set_v1" "default" {
       spec {
         container {
           name              = "openldap"
-          image             = "bitnami/openldap:2.6.10"
+          image             = "bitnamilegacy/openldap:2.6.10"
           image_pull_policy = "IfNotPresent"
 
           env {
