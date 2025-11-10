@@ -25,7 +25,15 @@ resource "kubernetes_service_v1" "default" {
     selector = local.selector_labels
 
     port {
-      port = 1389
+      name        = "default"
+      port        = 1389
+      target_port = 1389
+    }
+
+    port {
+      name        = "privileged"
+      port        = 389
+      target_port = 1389
     }
   }
 }
