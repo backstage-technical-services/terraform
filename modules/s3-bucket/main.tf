@@ -1,6 +1,3 @@
-data "aws_caller_identity" "this" {}
-data "aws_region" "current" {}
-
 locals {
   create_bucket_policy = var.enable_public_access
 }
