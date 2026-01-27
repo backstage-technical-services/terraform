@@ -9,8 +9,8 @@ resource "kubernetes_manifest" "traefik_middleware_rate_limit" {
     }
     spec = {
       rateLimit = {
-        average = 10
-        burst   = 100
+        average = 50
+        burst   = 1000
         period  = "1s"
       }
     }

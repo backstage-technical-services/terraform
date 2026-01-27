@@ -42,6 +42,48 @@ resource "kubernetes_cluster_role_v1" "github_actions" {
     resources  = ["certificatesigningrequests"]
     verbs      = ["create", "get"]
   }
+
+  rule {
+    api_groups = [""]
+    resources  = ["services", "secrets", "configmaps"]
+    verbs      = ["list", "get", "watch"]
+  }
+
+  rule {
+    api_groups = ["apps"]
+    resources  = ["deployments", "replicasets", "statefulsets"]
+    verbs      = ["list", "get", "watch"]
+  }
+
+  rule {
+    api_groups = ["batch"]
+    resources  = ["cronjobs"]
+    verbs      = ["list", "get", "watch"]
+  }
+
+  rule {
+    api_groups = ["networking.k8s.io"]
+    resources  = ["ingresses"]
+    verbs      = ["list", "get", "watch"]
+  }
+
+  rule {
+    api_groups = ["external-secrets.io"]
+    resources  = ["externalsecrets"]
+    verbs      = ["list", "get", "watch"]
+  }
+
+  rule {
+    api_groups = ["cert-manager.io"]
+    resources  = ["certificates"]
+    verbs      = ["list", "get", "watch"]
+  }
+
+  rule {
+    api_groups = ["traefik.io"]
+    resources  = ["ingressroutes"]
+    verbs      = ["list", "get", "watch"]
+  }
 }
 resource "kubernetes_cluster_role_binding_v1" "github_actions" {
   metadata {
