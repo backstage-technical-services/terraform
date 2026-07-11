@@ -102,7 +102,7 @@ module "bts_finance_co_uk" {
     {
       name    = ""
       type    = "A"
-      records = ["69.163.179.6"]
+      records = ["69.163.180.112"]
     },
     {
       name = ""
@@ -132,7 +132,7 @@ module "bts_finance_co_uk" {
     {
       name    = "ftp"
       type    = "A"
-      records = ["69.163.179.6"]
+      records = ["69.163.180.112"]
     },
     {
       name    = "mail"
@@ -147,12 +147,12 @@ module "bts_finance_co_uk" {
     {
       name    = "ssh"
       type    = "A"
-      records = ["69.163.179.6"]
+      records = ["69.163.180.112"]
     },
     {
       name    = "www"
       type    = "A"
-      records = ["69.163.179.6"]
+      records = ["69.163.180.112"]
     },
   ]
 }
