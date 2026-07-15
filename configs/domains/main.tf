@@ -91,6 +91,12 @@ module "bts_crew_com" {
       type    = "CNAME"
       records = ["bts-wiki.su.bath.ac.uk"]
     },
+
+    {
+      name    = "vpn"
+      type    = "A"
+      records = ["138.38.11.56"]
+    },
   ]
 }
 
