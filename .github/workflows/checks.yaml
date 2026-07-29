@@ -1,31 +1,33 @@
-name: Check
+name: Checks
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
 jobs:
   format:
+    name: Format
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       - name: terraform fmt
-        uses: dflook/terraform-fmt-check@v1
+        uses: dflook/terraform-fmt-check@v3
+
 
   lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - uses: terraform-linters/setup-tflint@v4
+        uses: actions/checkout@v7
+      - uses: terraform-linters/setup-tflint@v6
       - name: tflint
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tflint --init
           tflint \
             --format compact \
             --recursive \
-            --minimum-failure-severity=warning \
             --config "$(pwd)/.tflint.hcl"
