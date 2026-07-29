@@ -15,7 +15,7 @@ locals {
 }
 
 terraform {
-  required_version = "~> 1.7"
+  required_version = "~> 1.10"
 
   required_providers {
     aws = {
@@ -25,12 +25,12 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "bnjns-terraform"
-    key            = "backstage/base-infra.tfstate"
-    dynamodb_table = "bnjns-terraform-lock"
-    encrypt        = true
-    region         = "eu-west-1"
-    profile        = "backstage"
+    bucket       = "bnjns-terraform"
+    key          = "backstage/base-infra.tfstate"
+    encrypt      = true
+    region       = "eu-west-1"
+    profile      = "backstage"
+    use_lockfile = true
   }
 }
 
