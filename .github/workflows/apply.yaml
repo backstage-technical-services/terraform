@@ -4,145 +4,133 @@ permissions:
   contents: read
   id-token: write
   pull-requests: write
-  issues: write
-  statuses: write
 
 on:
-  issue_comment:
-    types: [ created ]
+  pull_request:
+    types: [closed]
+    branches: [main]
 
 jobs:
-  check-approval:
+  format:
+    name: Format
     runs-on: ubuntu-latest
-    if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, '/apply') }}
+    if: ${{ github.event.pull_request.merged == true }}
     steps:
-      - name: react
-        uses: dkershner6/reaction-action@v2
+      - name: Checkout
+        uses: actions/checkout@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          reaction: eyes
-      - name: fetch pull request information
-        id: pull-request
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            let pr = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number,
-            });
-            core.setOutput("base_sha", pr.data.base.sha);
-            core.setOutput("head_sha", pr.data.head.sha);
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ steps.pull-request.outputs.head_sha }}
-      - name: handle apply
-        id: handle-apply
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { handleApply } = require('./scripts/actions-helpers.js');
-            
-            handleApply({ github, context, core })
-      - name: status check
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { createStatusCheck } = require('./scripts/actions-helpers.js');
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+      - name: terraform fmt
+        uses: dflook/terraform-fmt-check@v3
 
-            createStatusCheck({
-              github,
-              context,
-              core,
-              sha: '${{ steps.pull-request.outputs.head_sha }}',
-              state: 'pending',
-              targetUrl: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}',
-              checkContext: 'apply (${{ steps.handle-apply.outputs.config }})'
-            })
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.merged == true }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+      - uses: terraform-linters/setup-tflint@v6
+      - name: tflint
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tflint --init
+          tflint \
+            --format compact \
+            --recursive \
+            --config "$(pwd)/.tflint.hcl"
+
+  config-matrix:
+    name: Config matrix
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.merged == true }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          fetch-depth: 0
+      - id: set-matrix
+        name: Determine config matrix
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+        run: scripts/detect-changed-configs.sh
     outputs:
-      sha: ${{ steps.pull-request.outputs.head_sha }}
-      config: ${{ steps.handle-apply.outputs.config }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
 
   apply:
+    name: Apply
     runs-on: ubuntu-latest
-    needs: check-approval
+    needs:
+      - config-matrix
+      - format
+      - lint
+    if: ${{ github.event.pull_request.merged == true && needs.config-matrix.outputs.matrix != '[]' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ${{ fromJson(needs.config-matrix.outputs.matrix) }}
     defaults:
       run:
         shell: bash
-        working-directory: configs/${{ needs.check-approval.outputs.config }}
+        working-directory: configs/${{ matrix.config }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
-          ref: ${{ needs.check-approval.outputs.sha }}
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+      - name: post apply comment (started)
+        continue-on-error: true
+        uses: ./.github/actions/post-terraform-comment
+        with:
+          command: apply
+          config: ${{ matrix.config }}
+          pr-number: ${{ github.event.pull_request.number }}
+          steps-json: '[{"name":"init","outcome":"pending"},{"name":"apply","outcome":"pending"}]'
       - uses: ./.github/actions/setup
         with:
-          config: ${{ needs.check-approval.outputs.config }}
+          config: ${{ matrix.config }}
           aws-role-arn: ${{ vars.AWS_APPLY_ROLE_ARN }}
           ssh-private-key: ${{ secrets.TF_MODULES_PRIVATE_SSH_KEY }}
       - name: init
         id: init
         run: terraform init -no-color 2>&1 | tee /tmp/${{ github.run_id }}.init.txt
+      - name: post apply comment (after init)
+        if: always()
+        continue-on-error: true
+        uses: ./.github/actions/post-terraform-comment
+        env:
+          STEP_INIT_OUTCOME: ${{ steps.init.outcome }}
+        with:
+          command: apply
+          config: ${{ matrix.config }}
+          pr-number: ${{ github.event.pull_request.number }}
+          steps-json: '[{"name":"init"},{"name":"apply","outcome":"pending"}]'
       - name: apply
         id: apply
         run: |
           aws s3 cp \
-            s3://backstage-terraform-plan-outputs/${{ github.event.issue.number }}/${{ needs.check-approval.outputs.config }}.out \
+            s3://backstage-terraform-plan-outputs/${{ github.event.pull_request.number }}/${{ matrix.config }}.out \
             plan.out \
             --profile backstage
           terraform apply -no-color plan.out 2>&1  | tee /tmp/${{ github.run_id }}.apply.txt
-      - name: build comment
+      - name: clean up plan output
         if: always()
-        id: build-comment
-        uses: actions/github-script@v7
+        run: |
+          aws s3 rm \
+            s3://backstage-terraform-plan-outputs/${{ github.event.pull_request.number }}/${{ matrix.config }}.out \
+            --profile backstage
+      - name: post apply comment (final)
+        if: always()
+        continue-on-error: true
+        uses: ./.github/actions/post-terraform-comment
         env:
           STEP_INIT_OUTCOME: ${{ steps.init.outcome }}
           STEP_APPLY_OUTCOME: ${{ steps.apply.outcome }}
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string
-          script: |
-            const { buildComment } = require('./scripts/actions-helpers.js');
-            
-            return buildComment({
-              context,
-              core,
-              command: 'apply',
-              configName: '${{ needs.check-approval.outputs.config }}', 
-              steps: [
-                { name: 'init' },
-                { name: 'apply' },
-              ]
-            });
-      - name: post comment
-        if: always()  
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          filePath: ${{ steps.build-comment.outputs.result }}
-          comment_tag: ${{ needs.check-approval.outputs.config }}
-          mode: recreate
-      - name: status check
-        if: always()
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { createStatusCheck } = require('./scripts/actions-helpers.js');
-            
-            createStatusCheck({
-              github,
-              context,
-              core,
-              sha: '${{ needs.check-approval.outputs.sha }}',
-              state: '${{ steps.apply.outcome == 'success' && 'success' || 'failure' }}',
-              targetUrl: 'https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}',
-              checkContext: 'apply (${{ needs.check-approval.outputs.config }})'
-            })
-      - name: react
-        if: always()
-        uses: dkershner6/reaction-action@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          reaction: ${{ steps.apply.outcome == 'success' && 'hooray' || '-1' }}
+          command: apply
+          config: ${{ matrix.config }}
+          pr-number: ${{ github.event.pull_request.number }}
+          steps-json: '[{"name":"init"},{"name":"apply"}]'

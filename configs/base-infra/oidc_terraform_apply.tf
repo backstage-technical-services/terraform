@@ -9,7 +9,6 @@ module "oidc_terraform_apply" {
     "plan-outputs" = data.aws_iam_policy_document.terraform_apply_plan_outputs.json
   }
 
-  allowed_branches    = ["main"]
   allow_pull_requests = true
 }
 
