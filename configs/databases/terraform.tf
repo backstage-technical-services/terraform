@@ -13,12 +13,12 @@ locals {
 }
 
 terraform {
-  required_version = "~> 1.7"
+  required_version = "~> 1.10"
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 6.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -31,12 +31,12 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "bnjns-terraform"
-    key            = "backstage/databases.tfstate"
-    dynamodb_table = "bnjns-terraform-lock"
-    encrypt        = true
-    region         = "eu-west-1"
-    profile        = "backstage"
+    bucket       = "bnjns-terraform"
+    key          = "backstage/databases.tfstate"
+    encrypt      = true
+    region       = "eu-west-1"
+    profile      = "backstage"
+    use_lockfile = true
   }
 }
 
