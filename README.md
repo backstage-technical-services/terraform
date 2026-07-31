@@ -76,12 +76,12 @@ To make changes to Terraform, follow the standard workflow:
 2. Make the changes, and push to the new branch.
 3. Open a Pull Request.
 
-   GitHub Actions will run some basic checks to ensure the Terraform is valid. It will also plan the changes of all
-   configuration and post the result of each plan to the PR as a comment.
+   GitHub Actions will run some basic checks to ensure the Terraform is valid. It will also plan the changes for any
+   affected configurations and post the result of each plan to the PR as a comment.
 
-   You should review the planned changes for all configurations to ensure they contain, and only contain, the changes
-   you expect. If there are unexpected changes, or you are not sure what changes you should expect, you should reach out
-   to the `#website-general` channel in Discord.
+   You should review the planned changes for each changed configuration to ensure they contain, and only contain, the
+   changes you expect. If there are unexpected changes, or you are not sure what changes you should expect, you should
+   reach out to the `#website-general` channel in Discord.
 
    You can fix any issues raised by these checks, or continue to work on the changes, by pushing new commits to the
    branch. The original plan comment will be updated with any changes.
@@ -90,15 +90,14 @@ To make changes to Terraform, follow the standard workflow:
    You can address any review comments simply by pushing new commits to the branch, but you will need to re-request a
    review.
 
-Once the PR has been approved:
+Once the PR has been approved, merge it.
 
-1. The reviewer will apply the changes by commenting `/apply configs/<config>` for each of the affected configurations.
-2. If an apply fails you should address the issue by pushing a fix to the branch, wait for the new plan(s), and then
-   review and apply as above. You will likely need a new review.
-3. Once all the changes have been applied you can merge the PR (usually handled by the person who applies the changes).
+Merging to `main` automatically applies Terraform for each changed configuration. Apply progress and results are posted
+back to the PR as comments.
 
 > [!IMPORTANT]
-> If a plan or apply fails, you can simply push a commit to fix the issue and try again.
+> If a plan fails, push a commit to fix the issue and wait for the new plan(s) before merging.
+> If an apply fails after merge, open a new PR with the fix and follow the same plan → review → merge flow.
 
 ### Running Terraform manually
 
