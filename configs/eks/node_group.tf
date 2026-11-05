@@ -11,7 +11,7 @@ module "node_group" {
 
   instance_types  = ["t4g.large"]
   instance_arch   = "arm64"
-  release_version = "1.36.1-20260529"
+  release_version = "1.36.5-20261031"
 
   vpc_id         = data.terraform_remote_state.base_infra.outputs.vpc.vpc_id
   vpc_subnet_ids = data.terraform_remote_state.base_infra.outputs.vpc.private_subnet_ids
