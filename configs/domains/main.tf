@@ -81,6 +81,11 @@ module "bts_crew_com" {
       records = ["bts-pxesrv.su.bath.ac.uk"]
     },
     {
+      name    = "status"
+      type    = "CNAME"
+      records = ["bts-status.su.bath.ac.uk"]
+    },
+    {
       name    = "telephony"
       type    = "CNAME"
       records = ["bts-telephony.su.bath.ac.uk"]
