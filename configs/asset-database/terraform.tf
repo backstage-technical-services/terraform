@@ -10,7 +10,7 @@ terraform {
 
   backend "s3" {
     bucket       = "bnjns-terraform"
-    key          = "backstage/asset-database.tfstate"
+    key          = "backstage/terraform/asset-database.tfstate"
     encrypt      = true
     region       = "eu-west-1"
     profile      = "backstage"
