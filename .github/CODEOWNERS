@@ -12,5 +12,3 @@
 /scripts/                             @bnjns
 /.github/CODEOWNERS                   @bnjns
 
-# Adding an ECR repository for a new app is routine
-/configs/eks/ecr_repositories.tf @backstage-technical-services/devops
