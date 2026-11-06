@@ -32,7 +32,7 @@ terraform {
 
   backend "s3" {
     bucket       = "bnjns-terraform"
-    key          = "backstage/databases.tfstate"
+    key          = "backstage/terraform/databases.tfstate"
     encrypt      = true
     region       = "eu-west-1"
     profile      = "backstage"

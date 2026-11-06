@@ -24,7 +24,7 @@ terraform {
 
   backend "s3" {
     bucket       = "bnjns-terraform"
-    key          = "backstage/eks.tfstate"
+    key          = "backstage/terraform/eks.tfstate"
     encrypt      = true
     region       = "eu-west-1"
     profile      = "backstage"
