@@ -7,13 +7,8 @@
 # Needs @bnjns: permissions, the EKS cluster itself, and plumbing in the underlying AWS account
 /configs/base-infra/                  @bnjns
 /configs/eks/                         @bnjns
-/configs/kubernetes/rbac.tf           @bnjns
-/configs/kubernetes/github_actions.tf @bnjns
-/configs/kubernetes/tailscale.tf      @bnjns
 /.github/workflows/                   @bnjns
 /.github/actions/                     @bnjns
 /scripts/                             @bnjns
 /.github/CODEOWNERS                   @bnjns
 
-# Adding an ECR repository for a new app is routine
-/configs/eks/ecr_repositories.tf @backstage-technical-services/devops
