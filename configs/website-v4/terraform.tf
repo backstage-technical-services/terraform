@@ -4,21 +4,30 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-    random = {
-      source  = "hashicorp/random"
-      version = "~> 3.0"
+      version = "~> 6.0"
     }
   }
 
   backend "s3" {
     bucket       = "bnjns-terraform"
-    key          = "backstage/sites.tfstate"
+    key          = "backstage/website-v4.tfstate"
     encrypt      = true
     region       = "eu-west-1"
     profile      = "backstage"
     use_lockfile = true
+  }
+}
+
+locals {
+  meta = {
+    owner     = "backstage"
+    component = try(regex("[^/]+$", path.cwd), "unknown")
+  }
+  default_tags = {
+    managed-by = "Terraform"
+    owner      = local.meta.owner
+    repo       = "backstage/terraform"
+    config     = local.meta.component
   }
 }
 
