@@ -24,8 +24,8 @@ rule "terraform_naming_convention" {
       regex = "^_?[a-z]+(_[a-z0-9]+)*$"
     }
     block = {
-      description = "^[a-z][a-z0-9]*(_[a-zA-Z][a-zA-Z0-9]*)*$"
-      regex = "^[a-z][a-z0-9]*(_[a-zA-Z][a-zA-Z0-9]*)*$"
+      description = "^[a-z][a-z0-9]*(_[a-zA-Z0-9]+)*$"
+      regex = "^[a-z][a-z0-9]*(_[a-zA-Z0-9]+)*$"
     }
   }
 
